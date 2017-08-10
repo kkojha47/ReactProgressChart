@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Progress Chart</title>
+  <link id='style1' rel="stylesheet" href="css/style.css">
+  <script src="js/react.js"></script>
+  <script src="js/react-dom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+
+</head>
+
+<body>
+
+  <div id="app"></div>
+
+<script type="text/babel">
+
+
+// Heading Component
+
+class Heading extends React.Component{
+         
+          render(){
+            return (
+                 <div id="heading">
+                    <img src="./images/tekion.png" width='120' className="logo" />
+                    <h3>ReactJS Assignment By Karuna Kant Ojha</h3>
+                  </div>
+              );
+        }
+}
+
+// Chart Component
+  
+class Chart extends React.Component{
+          
+          constructor(){
+            super();
+            this.state={
+                current: 0
+            }  
+          }
+           
+          percentage(percent){
+            const stepTime = Math.abs(Math.floor(2000/ percent));
+            let timer = setInterval(function() {
+                        this.setState({current: this.state.current+1});
+      
+                  if (this.state.current == percent) {
+                        clearInterval(timer);
+              }
+          }, stepTime);  
+       }
+
+         render(){ 
+             
+              let sheets = document.styleSheets; 
+              let sheet = document.styleSheets[0];
+              const classk=this.props.nameOfClass;
+              const i=this.props.i;
+              const toStroke=  Math.round((100-this.props.percent)*534/100);
+              const stepTime = Math.abs(Math.floor(2000/ this.props.percent));
+
+              sheet.insertRule("@-webkit-keyframes show"+classk+" {from {stroke-dashoffset: 537;} to{stroke-dashoffset: "+toStroke+"}", i);
+             
+              return (
+                         <figure className="chart">
+                            <figcaption></figcaption>
+                            <div className="percent" ><Counter percent={this.props.percent} step={stepTime}/></div>
+                            <img className={classk} src={"./images/"+classk+".png"}/>                            
+                            <svg width="200" height="200">
+                              <circle className= "outer" id={classk} cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)" />
+                            </svg>
+                            <div className="underText">{classk.toUpperCase()}</div>
+                         </figure>                        
+                     )
+            }
+}
+
+// Counter Component
+    
+var Counter = React.createClass({
+        getInitialState: function() {
+          return {count: 0};
+        },
+        tick: function() {
+          if(this.props.percent>this.state.count){
+          this.setState({count: this.state.count + 1});}
+        },
+        componentDidMount: function() {
+          this.interval = setInterval(this.tick, this.props.step);
+        },
+        componentWillUnmount: function() {
+          clearInterval(this.interval);
+        },
+         
+        render: function() {
+         const end=this.props.percent;
+         const stepTime = Math.abs(Math.floor(2000/ end));
+          return (
+            <div>{this.state.count}%</div>
+            
+          );
+        }
+});
+
+// ChartList Component
+class ChartList extends React.Component{
+            
+          constructor(){
+            super();
+            this.state={
+                
+            }
+          }           
+
+          render(){
+
+                return (
+                        <section className="container">
+                            
+                                  <Chart nameOfClass="revenue" percent="85" i='1'/>
+                                  <Chart nameOfClass="hours"   percent="40" i='2'/>
+                                  <Chart nameOfClass="jobs"    percent="65" i='3'/>
+                            
+                        </section>  
+                      )
+                }
+}
+
+// App Component
+class App extends React.Component{ 
+        
+        
+          render(){ return (<div>
+                              <Heading />
+                              <ChartList/>
+                            </div>);
+                  }
+              
+    }
+                      
+  ReactDOM.render(<App/>,document.getElementById('app'));
+
+  </script>
+</body>
+
+</html>
